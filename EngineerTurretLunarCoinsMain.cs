@@ -12,8 +12,7 @@ namespace Frogtown
     {
         public static bool enabled;
         public static UnityModManager.ModEntry modEntry;
-        public static Dictionary<string, string> originalBodyNames = new Dictionary<string, string>();
-
+        
         static bool Load(UnityModManager.ModEntry modEntry)
         {
             EngineerTurretLunarCoinsMain.modEntry = modEntry;
@@ -26,11 +25,15 @@ namespace Frogtown
 
         static bool OnToggle(UnityModManager.ModEntry modEntry, bool value)
         {
+            //Doesn't call FrogtownShared.ModToggled because this is a bug fix and shouldn't affect the isModded flag.
             EngineerTurretLunarCoinsMain.enabled = value;
             return true;
         }
     }
 
+    /// <summary>
+    /// Copies existing logic from Init, but filters to turret objects.
+    /// </summary>
     [HarmonyPatch(typeof(RoR2.PlayerCharacterMasterController))]
     [HarmonyPatch("Init")]
     [HarmonyPatch(new Type[] { })]
