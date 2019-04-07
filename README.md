@@ -3,7 +3,7 @@ Kills from engineer turrets can't drop lunar coins, this mod fixes that. This do
 
 # Installation
 1. Install [Unity Mod Manager](https://www.nexusmods.com/site/mods/21/)
-2. Visit the [releases page](https://github.com/ToyDragon/ROR2ModChatCommandCheats/releases)
+2. Visit the [releases page](https://github.com/ToyDragon/ROR2ModEngineerLunarCoinFix/releases)
 3. Download the latest FrogtownEngineerTurretLunarCoins.zip
 4. Unzip and move the FrogtownEngineerTurretLunarCoins folder to your Mods folder
 
