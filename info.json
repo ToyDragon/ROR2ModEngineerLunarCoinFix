@@ -1,0 +1,10 @@
+﻿{
+  "Id": "FrogtownEngineerTurretLunarCoinsFix",
+  "DisplayName": "Frogtown Engi Turret Coin Fix",
+  "Author": "Frogtown Matt",
+  "Version": "1.0.0",
+  "GameVersion": "1.0.0",
+  "Requirements": [],
+  "AssemblyName": "EngineerTurretLunarCoins.dll",
+  "EntryMethod": "Frogtown.EngineerTurretLunarCoinsMain.Load"
+}
