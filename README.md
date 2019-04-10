@@ -1,5 +1,5 @@
-# Engineer Lunar Coin Fix
-Kills from engineer turrets can't drop lunar coins, this mod fixes that. This does not prevent you from playing with unmodded clients since it is a bug fix. If playing multiplayer the server host must have the fix installed, and it will work for all engineers in the match.
+# Engineer Turret Fixes
+Kills from engineer turrets can't drop lunar coins, and turret damage doesn't contribute to the engineer's damage at the end of the match. This mod fixes that. This does not prevent you from playing with unmodded clients since it is a bug fix. If playing multiplayer the server host must have the fix installed, and it will work for all engineers in the match.
 
 # Installation
 1. Install [Unity Mod Manager](https://www.nexusmods.com/site/mods/21/)
