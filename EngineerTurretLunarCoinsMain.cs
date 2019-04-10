@@ -1,7 +1,6 @@
 ﻿using Harmony;
 using RoR2;
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using UnityModManagerNet;
@@ -19,6 +18,7 @@ namespace Frogtown
             var harmony = HarmonyInstance.Create("com.frog.engilunarcoinfix");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
             modEntry.OnToggle = OnToggle;
+
             enabled = true;
             return true;
         }
@@ -34,46 +34,37 @@ namespace Frogtown
     /// <summary>
     /// Copies existing logic from Init, but filters to turret objects.
     /// </summary>
-    [HarmonyPatch(typeof(RoR2.PlayerCharacterMasterController))]
-    [HarmonyPatch("Init")]
-    [HarmonyPatch(new Type[] { })]
-    class EngiLunarCoinPatch
+    [HarmonyPatch(typeof(RoR2.HealthComponent))]
+    [HarmonyPatch("TakeDamage")]
+    [HarmonyPatch(new Type[] { typeof(DamageInfo) })]
+    class TakeDamagePatch
     {
-        static void Postfix()
+        static void Prefix(DamageInfo damageInfo)
         {
-            if (!EngineerTurretLunarCoinsMain.enabled)
+            if(damageInfo.attacker != null)
             {
-                return;
-            }
-            GlobalEventManager.onCharacterDeathGlobal += delegate (DamageReport damageReport)
-            {
-                GameObject attacker = damageReport.damageInfo.attacker;
-                if (attacker)
+                CharacterBody component = damageInfo.attacker.GetComponent<CharacterBody>();
+                if (component != null)
                 {
-                    CharacterBody component = attacker.GetComponent<CharacterBody>();
-                    if (component)
+                    GameObject masterObject = component.masterObject;
+                    if (masterObject != null && masterObject.name == "EngiTurretMaster(Clone)")
                     {
-                        GameObject masterObject = component.masterObject;
-                        if (masterObject && masterObject.name == "EngiTurretMaster(Clone)")
+                        Deployable component2 = masterObject.GetComponent<Deployable>();
+                        if (component2 != null && component2.ownerMaster != null)
                         {
-                            Deployable component2 = masterObject.GetComponent<Deployable>();
-                            if (component2)
+                            PlayerCharacterMasterController component3 = component2.ownerMaster.GetComponent<PlayerCharacterMasterController>();
+                            if (component3 != null && component3.master != null)
                             {
-                                PlayerCharacterMasterController component3 = component2.ownerMaster.GetComponent<PlayerCharacterMasterController>();
-                                if (component3)
+                                GameObject body = component3.master.GetBodyObject();
+                                if (body != null)
                                 {
-                                    var coinmult = Traverse.Create(component3).Field<float>("lunarCoinChanceMultiplier");
-                                    if (Util.CheckRoll(1f * coinmult.Value, 0f, null))
-                                    {
-                                        PickupDropletController.CreatePickupDroplet(PickupIndex.lunarCoin1, damageReport.victim.transform.position, Vector3.up * 10f);
-                                        coinmult.Value *= 0.5f;
-                                    }
+                                    damageInfo.attacker = body;
                                 }
                             }
                         }
                     }
                 }
-            };
+            }
         }
     }
 }
