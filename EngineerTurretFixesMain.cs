@@ -7,14 +7,14 @@ using UnityModManagerNet;
 
 namespace Frogtown
 {
-    public class EngineerTurretLunarCoinsMain
+    public class EngineerTurretFixesMain
     {
         public static bool enabled;
         public static UnityModManager.ModEntry modEntry;
         
         static bool Load(UnityModManager.ModEntry modEntry)
         {
-            EngineerTurretLunarCoinsMain.modEntry = modEntry;
+            EngineerTurretFixesMain.modEntry = modEntry;
             var harmony = HarmonyInstance.Create("com.frog.engilunarcoinfix");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
             modEntry.OnToggle = OnToggle;
@@ -26,7 +26,7 @@ namespace Frogtown
         static bool OnToggle(UnityModManager.ModEntry modEntry, bool value)
         {
             //Doesn't call FrogtownShared.ModToggled because this is a bug fix and shouldn't affect the isModded flag.
-            EngineerTurretLunarCoinsMain.enabled = value;
+            EngineerTurretFixesMain.enabled = value;
             return true;
         }
     }
