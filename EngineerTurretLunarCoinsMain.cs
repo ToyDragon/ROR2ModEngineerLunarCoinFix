@@ -39,9 +39,11 @@ namespace Frogtown
     [HarmonyPatch(new Type[] { typeof(DamageInfo) })]
     class TakeDamagePatch
     {
+        static GameObject lastAttacker;
         static void Prefix(DamageInfo damageInfo)
         {
-            if(damageInfo.attacker != null)
+            lastAttacker = damageInfo.attacker;
+            if (damageInfo.attacker != null)
             {
                 CharacterBody component = damageInfo.attacker.GetComponent<CharacterBody>();
                 if (component != null)
@@ -65,6 +67,11 @@ namespace Frogtown
                     }
                 }
             }
+        }
+
+        static void Postfix(DamageInfo damageInfo)
+        {
+            damageInfo.attacker = lastAttacker;
         }
     }
 }
