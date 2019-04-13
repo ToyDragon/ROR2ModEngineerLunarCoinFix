@@ -1,47 +1,41 @@
-﻿using Harmony;
+﻿using BepInEx;
 using RoR2;
-using System;
-using System.Reflection;
 using UnityEngine;
-using UnityModManagerNet;
 
 namespace Frogtown
 {
-    public class EngineerTurretFixesMain
+    [BepInDependency("com.frogtown.shared")]
+    [BepInPlugin("com.frogtown.engineerfixes", "Engineer Fixes", "1.0.2")]
+    public class FrogtownEngineerFixes : BaseUnityPlugin
     {
-        public static bool enabled;
-        public static UnityModManager.ModEntry modEntry;
-        
-        static bool Load(UnityModManager.ModEntry modEntry)
-        {
-            EngineerTurretFixesMain.modEntry = modEntry;
-            var harmony = HarmonyInstance.Create("com.frog.engilunarcoinfix");
-            harmony.PatchAll(Assembly.GetExecutingAssembly());
-            modEntry.OnToggle = OnToggle;
+        public ModDetails modDetails;
 
-            enabled = true;
-            return true;
+        public void Awake()
+        {
+            modDetails = new ModDetails("com.frogtown.engineerfixes");
+            modDetails.OnlyContainsBugFixesThatArentContriversial();
+           
+            On.RoR2.HealthComponent.TakeDamage += (orig, instance, damageInfo) =>
+            {
+                HealthComponentTakeDamagePrefix(damageInfo);
+                orig(instance, damageInfo);
+                HealthComponentTakeDamagePostfix(damageInfo);
+            };
         }
 
-        static bool OnToggle(UnityModManager.ModEntry modEntry, bool value)
-        {
-            //Doesn't call FrogtownShared.ModToggled because this is a bug fix and shouldn't affect the isModded flag.
-            EngineerTurretFixesMain.enabled = value;
-            return true;
-        }
-    }
+        private GameObject lastAttacker;
 
-    /// <summary>
-    /// Copies existing logic from Init, but filters to turret objects.
-    /// </summary>
-    [HarmonyPatch(typeof(RoR2.HealthComponent))]
-    [HarmonyPatch("TakeDamage")]
-    [HarmonyPatch(new Type[] { typeof(DamageInfo) })]
-    class TakeDamagePatch
-    {
-        static GameObject lastAttacker;
-        static void Prefix(DamageInfo damageInfo)
+        /// <summary>
+        /// Damage logging happens in HealthComponent.TakeDamage, but most other effects happen elsewhere. 
+        /// </summary>
+        /// <param name="damageInfo"></param>
+        private void HealthComponentTakeDamagePrefix(DamageInfo damageInfo)
         {
+            if (!modDetails.enabled)
+            {
+                return;
+            }
+            
             lastAttacker = damageInfo.attacker;
             if (damageInfo.attacker != null)
             {
@@ -69,8 +63,13 @@ namespace Frogtown
             }
         }
 
-        static void Postfix(DamageInfo damageInfo)
+        private void HealthComponentTakeDamagePostfix(DamageInfo damageInfo)
         {
+            if (!modDetails.enabled)
+            {
+                return;
+            }
+
             damageInfo.attacker = lastAttacker;
         }
     }
