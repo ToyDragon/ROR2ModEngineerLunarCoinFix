@@ -1,11 +1,12 @@
 ﻿using BepInEx;
 using RoR2;
+using System;
 using UnityEngine;
 
 namespace Frogtown
 {
     [BepInDependency("com.frogtown.shared")]
-    [BepInPlugin("com.frogtown.engineerfixes", "Engineer Fixes", "1.0.4")]
+    [BepInPlugin("com.frogtown.engineerfixes", "Engineer Fixes", "1.0.6")]
     public class FrogtownEngineerFixes : BaseUnityPlugin
     {
         public FrogtownModDetails modDetails;
@@ -17,6 +18,7 @@ namespace Frogtown
                 description = "Allows turret kills to drop lunar coins, and turret damage count in score card.",
                 githubAuthor = "ToyDragon",
                 githubRepo = "ROR2ModEngineerLunarCoinFix",
+                thunderstoreFullName = "ToyDragon-EngineerLunarCoinsFix",
             };
             modDetails.OnlyContainsBugFixesOrUIChangesThatArentContriversial();
             FrogtownShared.RegisterMod(modDetails);
@@ -37,46 +39,51 @@ namespace Frogtown
         /// <param name="damageInfo"></param>
         private void HealthComponentTakeDamagePrefix(DamageInfo damageInfo)
         {
-            if (!modDetails.enabled)
+            try
             {
-                return;
-            }
-            
-            lastAttacker = damageInfo.attacker;
-            if (damageInfo.attacker != null)
-            {
-                CharacterBody component = damageInfo.attacker.GetComponent<CharacterBody>();
-                if (component != null)
+                if (!modDetails.enabled)
                 {
-                    GameObject masterObject = component.masterObject;
-                    if (masterObject != null && masterObject.name == "EngiTurretMaster(Clone)")
+                    return;
+                }
+                lastAttacker = damageInfo?.attacker;
+                if (lastAttacker != null)
+                {
+                    GameObject masterObject = lastAttacker.GetComponent<CharacterBody>()?.masterObject;
+                    if (masterObject?.name == "EngiTurretMaster(Clone)")
                     {
-                        Deployable component2 = masterObject.GetComponent<Deployable>();
-                        if (component2 != null && component2.ownerMaster != null)
+                        GameObject body = masterObject.GetComponent<Deployable>()?.ownerMaster?.GetComponent<PlayerCharacterMasterController>()?.master?.GetBodyObject();
+                        if (body != null)
                         {
-                            PlayerCharacterMasterController component3 = component2.ownerMaster.GetComponent<PlayerCharacterMasterController>();
-                            if (component3 != null && component3.master != null)
-                            {
-                                GameObject body = component3.master.GetBodyObject();
-                                if (body != null)
-                                {
-                                    damageInfo.attacker = body;
-                                }
-                            }
+                            damageInfo.attacker = body;
                         }
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Error while checking for turret owner");
+                Debug.LogError(e.Message);
+                Debug.LogError(e.StackTrace);
             }
         }
 
         private void HealthComponentTakeDamagePostfix(DamageInfo damageInfo)
         {
-            if (!modDetails.enabled)
+            try
             {
-                return;
-            }
+                if (!modDetails.enabled)
+                {
+                    return;
+                }
 
-            damageInfo.attacker = lastAttacker;
-        }
+                damageInfo.attacker = lastAttacker;
+            }
+            catch(Exception e)
+            {
+                Debug.LogError("Error while restoring turret as damage owner");
+                Debug.LogError(e.Message);
+                Debug.LogError(e.StackTrace);
+            }
+}
     }
 }

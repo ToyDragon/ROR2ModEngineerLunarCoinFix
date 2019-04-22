@@ -3,13 +3,15 @@ Kills from engineer turrets can't drop lunar coins, and turret damage doesn't co
 
 # Installation
 1. Install [BepInEx Mod Pack](https://thunderstore.io/package/bbepis/BepInExPack/)
-2. Install [Frogtown Shared Mod Utility](https://github.com/ToyDragon/ROR2ModShared)
-3. Visit the [releases page](https://github.com/ToyDragon/ROR2ModEngineerLunarCoinFix/releases)
-4. Download the latest EngineerFixes.dll
-5. Move EngineerFixes.dll to your \BepInEx\plugins folder
+2. Install [Frogtown Mod Manager](https://thunderstore.io/package/ToyDragon/SharedModLibrary/)
+3. Download the latest ToyDragon-EngineerLunarCoinsFix.zip
+4. Unzip it and move EngineerFixes.dll to your \BepInEx\plugins folder
 
-# Disabling/Enabling
-If you want to you can turn the mod off without uninstalling it. In game type `/disable_mod engineerfixes` to turn it off, and `/enable_mod engineerfixes` or `/enable_mod all` to turn it back on. It will be turned back on automatically when the game starts.
+## Engineer Fixes Versions
+- 1.0.6
+  - Add extra error handling to hopefully fix compatability issues causing some players to not be able to damage enemies.
+- 1.0.5
+  - Update documentation to point to thunderstore instead of github.
 
 # Other Mods
-Check out the [Frogtown Shared Mod Utility](https://github.com/ToyDragon/ROR2ModShared) page to see more cool mods.
+Check out the [Frogtown Mod Manager](https://thunderstore.io/package/ToyDragon/SharedModLibrary/) page to see more cool mods.
